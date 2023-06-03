@@ -9,6 +9,8 @@
 #include <zephyr/shell/shell_uart.h>
 #include <zephyr/usb/usb_device.h>
 
+#include "../inc/support.h"
+
 LOG_MODULE_REGISTER(baloon);
 
 /* 1000 msec = 1 sec */
@@ -20,7 +22,7 @@ const struct shell *sh;
 void main(void) {
   sh = shell_backend_uart_get_ptr();
 
-  shell_print(sh, "Tracker start");
+  //shell_print(sh, "Tracker start");
   LOG_INF("Tracker start");
 
   /* main while loop */
