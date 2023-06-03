@@ -1,0 +1,15 @@
+# STM32L433RC Nucleo board configuration
+
+# Copyright (c) 2021 Matija Tudan
+# SPDX-License-Identifier: Apache-2.0
+
+if BOARD_BALOON_TRACKER_L433CC
+
+config BOARD
+	default "stm32l433ccu_baloon_tracker"
+
+config SPI_STM32_INTERRUPT
+	default y
+	depends on SPI
+
+endif # BOARD_BALOON_TRACKER_L433CC
