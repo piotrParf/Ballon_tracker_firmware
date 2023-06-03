@@ -1,4 +1,4 @@
-# CanRS485
+# Ballon tracker
 To build:
 west build
 
