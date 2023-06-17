@@ -7,4 +7,5 @@ project(stm32l433_baloon_tracker)
 
 target_sources(app PRIVATE 
     src/main.c
+    src/radio_thread.c
 )

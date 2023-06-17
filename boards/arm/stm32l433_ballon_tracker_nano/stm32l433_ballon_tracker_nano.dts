@@ -45,17 +45,18 @@ zephyr_udc0: &usb {
 
 &pll {
 	div-m = <1>;
-	mul-n = <40>;
+	mul-n = <12>;
 	div-p = <7>;
 	div-q = <2>;
 	div-r = <4>;
-	clocks = <&clk_hse>;
+	/* HSE works bad in variable power input */
+	clocks = <&clk_hsi>;
 	status = "okay";
 };
 
 &rcc {
 	clocks = <&pll>;
-	clock-frequency = <DT_FREQ_M(80)>;
+	clock-frequency = <DT_FREQ_M(48)>;
 	ahb-prescaler = <1>;
 	apb1-prescaler = <1>;
 	apb2-prescaler = <1>;
@@ -72,6 +73,7 @@ zephyr_udc0: &usb {
 	pinctrl-0 = <&usart3_tx_pb10 &usart3_rx_pb11>;
 	pinctrl-names = "default";
 	current-speed = <115200>;
+	status = "okay";
 };
 
 &i2c1 {
@@ -85,6 +87,33 @@ zephyr_udc0: &usb {
 	status = "okay";
 };
 
+/ {
+	pwr_outs{
+		compatible = "gpio-leds";
+		synth: synth_ {
+			gpios = <&gpioa 10 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
+		};
+		gps: gps_ {
+			gpios = <&gpioa 9 (GPIO_OPEN_DRAIN | GPIO_ACTIVE_LOW)>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpiob 15 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	aliases {
+		pwrsynth = &synth;
+		pwrgps = &gps;
+		myled0 = &led0;
+	};
+
+};
+
+
 &flash0 {
 	partitions {
 		compatible = "fixed-partitions";
@@ -92,7 +121,7 @@ zephyr_udc0: &usb {
 		#size-cells = <1>;
 
 		/*
-		 * Reserve the final 16 KiB for file system partition - future
+		 * Reserve the final 16 KiB for file system partition - for future
 		 */
 		storage_partition: partition@3c000 {
 			label = "storage";
