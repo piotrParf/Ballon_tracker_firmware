@@ -2,10 +2,12 @@
  * Copyright (c) SP4SWD 2023
  */
 #include "../inc/support.h"
+#include "drivers/Si5351/si5351.h"
+#include "drivers/WSPR.h"
 
 LOG_MODULE_REGISTER(radio);
 
-#define SLEEP_TIME_MS 1000
+#define SLEEP_TIME_MS 8900
 static const struct gpio_dt_spec pwr_synth =
     GPIO_DT_SPEC_GET(DT_ALIAS(pwrsynth), gpios);
 
@@ -34,11 +36,30 @@ bool radio_poweron(void) {
 }
 
 void radio_thread(void) {
+  int ret;
 
   LOG_INF("Radio starting");
 
+  radio_poweron();
+
+  ret = SI5351_init();
+  if (ret) {
+    LOG_INF("SI5351_init failed: %d\n", ret);
+    return;
+  }
+
+  SI5351_frequency(SI5351_FREQUENCY);
+
   /* thread while loop */
   while (1) {
+
+    /* CONSTRUCT WSPR EXTENDED MESSAGE */
+    WSPR_encode_msg_extended(10.0f, 10.0f, 1000, WSPR_CALLSIGN);
+    WSPR_create_tones();
+
+    /* transmit */
+    WSPR_transmit();
+
     k_msleep(SLEEP_TIME_MS);
     k_yield();
   }

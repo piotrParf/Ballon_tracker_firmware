@@ -25,7 +25,7 @@ void main(void) {
   int ret;
   LOG_INF("Tracker start");
 
-  radio_poweron();
+  //radio_poweron();
 
   sh = shell_backend_uart_get_ptr();
   if (sh == NULL) {
